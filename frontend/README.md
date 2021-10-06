@@ -1,4 +1,4 @@
-# Iniciar Proyecto e instalar depedencia
+# Ejecución del proyecto con ReactJs
 
 Para el frontend de este sitio, se hizo uso de la libreria de reactjs y antes de correr el proyecto, debemos considerar los siguientes aspectos.
 
