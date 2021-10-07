@@ -30,41 +30,70 @@ function CreateOperation() {
         })
     }
 
-    const multiplyBigIntegers = (event) => {
-        event.preventDefault();
-        const number1 = BigInt(data.number1);
-        const number2 = BigInt(data.number2);
-        let resultado = number1 * number2;
-        
-        setData({
-            ...data,
-            result : resultado.toString()
-        })
+    const multiplyBigIntegers = async (number1,number2) => {
+        axios
+            .post('/api/v1/operation/get-multiply-result?number1='+number1+'&number2='+number2, {})
+            .then(function (response) {
+                //console.log(data);
+                setData({
+                    ...data,
+                    result : response.data.result
+                })
+            })
+            .catch(function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'There are empty values at the form!',
+                })
+                setData({
+                    ...data,
+                    result : 0
+                })
+            })
+        ;
 
     }
 
-    const sendData = (event) => {
+    const sendData = async (event) => {
         event.preventDefault();
-        axios.post('/api/v1/operation/save-operation', data)
-          .then(function (response) {
-            console.log(response);
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Your work has been saved',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(()=>{
-                console.log('redirect to operation');
-                window.location.href='/operations';
-            })
-          })
-          .catch(function (error) {
-            console.log(error);
+        await multiplyBigIntegers(data.number1,data.number2);
+        await callServiceToSaveOperation();    
+    }
+
+    const callServiceToSaveOperation = async () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want save this operation?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post('/api/v1/operation/save-operation', data)
+                    .then(function (response) {
+                        console.log(response);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Your work has been saved',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(()=>{
+                            console.log('redirect to operation');
+                            window.location.href='/operations';
+                        })
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                ;
+            }
           })
         ;
     }
-
     return(
         
         <Form onSubmit={sendData}>
@@ -96,23 +125,12 @@ function CreateOperation() {
                     <FormGroup className="col-12 col-md-3">
                         
                         <Button 
-                            className="btn btn-primary" 
-                            name="btnCalculate" 
-                            id="btnCalculate"
-                            onClick={multiplyBigIntegers}
-                        >
-                            Calulate Operation
-                        </Button>
-                    </FormGroup>
-                    <FormGroup className="col-12 col-md-3">
-                        
-                        <Button 
                             type="submit"
                             className="btn btn-primary" 
                             name="btnSubmitOperation" 
                             id="btnSubmitOperation"
                         >
-                            Save Operation
+                            Calculate and Save Operation
                         </Button>
                     </FormGroup>
                 </div>

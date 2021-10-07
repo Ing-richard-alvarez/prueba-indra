@@ -1,14 +1,18 @@
 package com.example.demo.controllers;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.example.demo.models.OperationModel;
 import com.example.demo.services.OperationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,19 +25,22 @@ public class OperationController {
 
     @RequestMapping(value = "/get-all-operation", method = RequestMethod.GET)
     @ResponseBody
-    public ArrayList<OperationModel> getAllOperation() {
+    public ArrayList<OperationModel> getAllOperation() 
+    {
         ArrayList<OperationModel> operationResponse = (ArrayList<OperationModel>) operationService.getAllOperation();
         return operationResponse;
     }
 
     @RequestMapping(value = "/save-operation", method = RequestMethod.POST)
-    public OperationModel saveOperation(@RequestBody OperationModel operation) {
+    public OperationModel saveOperation(@RequestBody OperationModel operation) 
+    {
         OperationModel saveResponse = (OperationModel) operationService.saveOperation(operation);
         return saveResponse;
     }
 
     @RequestMapping(value = "/delete-single-operation", method = RequestMethod.DELETE)
-    public void deleteOperationById(@RequestBody OperationModel operation){
+    public void deleteOperationById(@RequestBody OperationModel operation)
+    {
         operationService.deleteOperationById(operation);
     }
 
@@ -42,4 +49,15 @@ public class OperationController {
         operationService.deleteAllRow();
     }
 
+    @RequestMapping(value = "/get-multiply-result", method = RequestMethod.POST)
+    public ResponseEntity<Object> getMultiplyResult(
+        @RequestParam(name="number1", required = true) Long number1,
+        @RequestParam(name="number2", required = true) Long number2
+    ) 
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+            "result", operationService.productBetweenIntegers(number1, number2),
+            "status", 200))
+        ;
+    }
 }

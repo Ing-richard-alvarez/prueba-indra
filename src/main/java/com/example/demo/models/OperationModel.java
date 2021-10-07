@@ -90,8 +90,7 @@ public class OperationModel {
         BigInteger numero2 = new BigInteger(Long.toString(this.number2));
         BigInteger operation = numero1.multiply(numero2);
         this.results = operation.toString();
-
-
+        
     }
     
     public String getResults() {
