@@ -1,11 +1,14 @@
 package com.example.demo.controllers;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.example.demo.models.OperationModel;
 import com.example.demo.services.OperationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,11 +50,14 @@ public class OperationController {
     }
 
     @RequestMapping(value = "/get-multiply-result", method = RequestMethod.POST)
-    public String getMultiplyResult(
+    public ResponseEntity<Object> getMultiplyResult(
         @RequestParam(name="number1", required = true) Long number1,
         @RequestParam(name="number2", required = true) Long number2
     ) 
     {
-        return operationService.productBetweenIntegers(number1, number2);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+            "result", operationService.productBetweenIntegers(number1, number2),
+            "status", 200))
+        ;
     }
 }
